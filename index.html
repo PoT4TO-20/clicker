@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cookie Clicker</title>
+  <link rel="stylesheet" href="https://pyscript.net/releases/2026.7.3/core.css">
+  <script type="module" src="https://pyscript.net/releases/2026.7.3/core.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap">
+  <style>
+    :root {
+      --bg: #fdf3e7;
+      --panel: #fffaf3;
+      --text: #4a2c17;
+      --muted: #9b7b62;
+      --accent: #d9822b;
+      --accent-dark: #b5651d;
+      --border: #ecd9c3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Fredoka", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .game {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 16px;
+    }
+
+    /* Left side: counter + cookie */
+    .bakery {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    #count { font-size: 44px; font-weight: 600; margin: 0; }
+    #cps   { font-size: 18px; color: var(--muted); margin: 4px 0 24px; }
+    #cookie {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: transform 0.08s;
+    }
+    #cookie:hover  { transform: scale(1.04); }
+    #cookie:active { transform: scale(0.94); }
+    #cookie img {
+      width: 240px;
+      height: 240px;
+      object-fit: cover;
+      border-radius: 50%;
+      user-select: none;
+      filter: drop-shadow(0 8px 16px rgba(74, 44, 23, 0.25));
+    }
+
+    /* Right side: shop */
+    .shop-panel {
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .shop-panel h2 { margin: 0 0 12px; font-size: 22px; }
+    #shop { display: flex; flex-direction: column; gap: 8px; }
+
+    .building {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        "name  owned"
+        "cost  rate";
+      gap: 2px 8px;
+      width: 100%;
+      padding: 10px 14px;
+      font-family: inherit;
+      color: var(--text);
+      text-align: left;
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color 0.1s, transform 0.05s;
+    }
+    .building:hover:not(:disabled) { border-color: var(--accent); }
+    .building:active:not(:disabled) { transform: scale(0.98); }
+    .building:disabled { opacity: 0.45; cursor: default; }
+
+    .b-name  { grid-area: name;  font-size: 18px; font-weight: 600; }
+    .b-owned { grid-area: owned; font-size: 22px; font-weight: 600; color: var(--accent-dark); }
+    .b-cost  { grid-area: cost;  font-size: 14px; }
+    .b-rate  { grid-area: rate;  font-size: 14px; color: var(--muted); }
+
+    @media (max-width: 700px) {
+      .game { grid-template-columns: 1fr; }
+      #cookie img { width: 180px; height: 180px; }
+    }
+    #reset {
+      margin-top: 32px;
+      padding: 6px 14px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #reset:hover { color: #b3261e; border-color: #b3261e; }
+  </style>
+</head>
+<body>
+  <main class="game">
+    <section class="bakery">
+      <h1 id="count">0 cookies</h1>
+      <p id="cps">per second: 0</p>
+      <button id="cookie">
+        <img src="cookie.png" alt="Cookie" draggable="false">
+      </button>
+      <button id="reset">Reset game</button>
+    </section>
+
+    <aside class="shop-panel">
+      <h2>Shop</h2>
+      <div id="shop">
+        <!--
+          Your Python should create one button like this per building:
+
+          <button class="building">
+            <span class="b-name">Farm</span>
+            <span class="b-owned">3</span>
+            <span class="b-cost">🍪 152</span>
+            <span class="b-rate">+1/s each</span>
+          </button>
+        -->
+      </div>
+    </aside>
+  </main>
+
+  <script type="mpy" src="main.py"></script>
+</body>
+</html>
