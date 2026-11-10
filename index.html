@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Cookie Clicker</title>
+  <title>Potato Clicker</title>
+  <link rel="icon" href="cookie.png">
   <link rel="stylesheet" href="https://pyscript.net/releases/2026.7.3/core.css">
   <script type="module" src="https://pyscript.net/releases/2026.7.3/core.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap">
@@ -34,12 +35,11 @@
       padding: 32px 16px;
     }
 
-    /* Left side: counter + cookie */
+    /* Left side: counter, potato, upgrades */
     .bakery {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       text-align: center;
     }
     #count { font-size: 44px; font-weight: 600; margin: 0; }
@@ -62,9 +62,95 @@
       user-select: none;
       filter: drop-shadow(0 8px 16px rgba(74, 44, 23, 0.25));
     }
+    #reset {
+      margin-top: 24px;
+      padding: 6px 14px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #reset:hover { color: #b3261e; border-color: #b3261e; }
+
+    /* Upgrades panel under the potato */
+    .upgrade-panel {
+      width: 100%;
+      max-width: 420px;
+      margin-top: 28px;
+      padding: 14px 16px;
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      text-align: left;
+    }
+    .upgrade-panel h2 { margin: 0 0 12px; font-size: 22px; }
+
+    #upgrades {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 64px;
+    }
+    .upgrade {
+      width: 64px;
+      height: 64px;
+      padding: 0;
+      font-family: inherit;
+      color: var(--text);
+      background: #fff7e6;
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.1s, box-shadow 0.1s;
+    }
+    .upgrade:hover:not(:disabled) {
+      background: #ffeccc;
+      box-shadow: 0 0 0 3px rgba(217, 130, 43, 0.25);
+    }
+    .upgrade:disabled { cursor: default; border-color: var(--border); }
+    .upgrade:disabled .u-icon { opacity: 0.35; }
+    .upgrade[hidden] { display: none; }
+
+    .u-icon { font-size: 20px; font-weight: 600; line-height: 1; }
+    .u-icon img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      user-select: none;
+    }
+
+    /* Details card: hidden until you hover a tile */
+    .u-info {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      z-index: 20;
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      padding: 10px 12px;
+      text-align: left;
+      background: white;
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(74, 44, 23, 0.18);
+      pointer-events: none;
+    }
+    .upgrade:hover .u-info { display: flex; }
+
+    .u-name { font-size: 14px; font-weight: 600; }
+    .u-desc { font-size: 12px; color: var(--muted); }
+    .u-cost { font-size: 12px; }
 
     /* Right side: shop */
     .shop-panel {
+      align-self: start;
       background: var(--panel);
       border: 2px solid var(--border);
       border-radius: 16px;
@@ -104,48 +190,44 @@
       .game { grid-template-columns: 1fr; }
       #cookie img { width: 180px; height: 180px; }
     }
-    #reset {
-      margin-top: 32px;
-      padding: 6px 14px;
-      font-family: inherit;
-      font-size: 14px;
-      color: var(--muted);
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    #reset:hover { color: #b3261e; border-color: #b3261e; }
   </style>
 </head>
 <body>
   <main class="game">
     <section class="bakery">
-      <h1 id="count">0 cookies</h1>
-      <p id="cps">per second: 0</p>
-      <button id="cookie">
-        <img src="cookie.png" alt="Cookie" draggable="false">
+      <h1 id="count">0 potatoes</h1>
+      <p id="cps">potatoes per second: 0.0</p>
+      <button id="cookie" oncontextmenu="return false">
+        <img src="cookie.png" alt="Potato" draggable="false">
       </button>
+
+      <div class="upgrade-panel">
+        <h2>Upgrades</h2>
+        <div id="upgrades">
+          <!--
+            Your Python should create one button like this per upgrade:
+
+            <button class="upgrade">
+              <span class="u-icon">👆</span>
+              <span class="u-info">
+                <span class="u-name">Tapper</span>
+                <span class="u-desc">×2 potatoes per click</span>
+                <span class="u-cost">🥔 100</span>
+              </span>
+            </button>
+          -->
+        </div>
+      </div>
+
       <button id="reset">Reset game</button>
     </section>
 
     <aside class="shop-panel">
       <h2>Shop</h2>
-      <div id="shop">
-        <!--
-          Your Python should create one button like this per building:
-
-          <button class="building">
-            <span class="b-name">Farm</span>
-            <span class="b-owned">3</span>
-            <span class="b-cost">🍪 152</span>
-            <span class="b-rate">+1/s each</span>
-          </button>
-        -->
-      </div>
+      <div id="shop"></div>
     </aside>
   </main>
 
-  <script type="mpy" src="main.py"></script>
+  <script type="mpy" src="main.py" config='{"files": {"./data.py": "./data.py"}}'></script>
 </body>
 </html>
