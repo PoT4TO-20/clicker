@@ -33,14 +33,154 @@ BUILDINGS = [
         "base_cost": 180000,
         "growth": 1.15,
         "cps": 1000
+    }
+]
+
+ACHIEVEMENTS = [
+    {
+        "id": 'clicks1',
+        "name": 'First step on the potato field',
+        "desc": 'Click once on the potato in this save',
+        "icon": None,
+        "kind": 'clicks',
+        'target': None,
+        'amount': 1 
     },
     {
-        "id": 'maksym',
-        "name": "Maksym Parkhomenko",
-        "base_cost": 2200000,
-        "growth": 1.15,
-        "cps": 10000
-    }
+        "id": 'cps1',
+        "name": 'One extra every second',
+        "desc": 'Gain 1 potato per second',
+        "icon": None,
+        "kind": 'cps',
+        'target': None,
+        'amount': 1 
+    },
+    {
+        "id": 'potato1',
+        "name": 'A small potato drawer',
+        "desc": 'Get a total of 10 potatoes earned',
+        "icon": None,
+        "kind": 'earned',
+        'target': None,
+        'amount': 10
+    },
+    {
+        "id": 'cursors1',
+        "name": 'Another cursor??',
+        "desc": 'Buy 1 Cursor building from the Shop',
+        "icon": None,
+        "kind": 'building',
+        'target': 'click',
+        'amount': 1 
+    },
+    {
+        "id": 'sweeper1',
+        "name": 'Explosive potatoes',
+        "desc": 'Buy 1 Minesweeper building from the Shop',
+        "icon": None,
+        "kind": 'building',
+        'target': 'minesweeper',
+        'amount': 1 
+    },
+    {
+        "id": 'tetris1',
+        "name": 'Fit that potato',
+        "desc": 'Buy 1 Tetris building from the Shop',
+        "icon": None,
+        "kind": 'building',
+        'target': 'tetris',
+        'amount': 1 
+    },
+    {
+        "id": 'faceit1',
+        "name": 'You better not miss a shot.',
+        "desc": 'Buy 1 Faceit building from the Shop',
+        "icon": None,
+        "kind": 'building',
+        'target': 'faceit',
+        'amount': 1 
+    },
+    {
+        "id": 'basket1',
+        "name": 'Lay-up',
+        "desc": 'Buy 1 Basketball building from the Shop',
+        "icon": None,
+        "kind": 'building',
+        'target': 'basket',
+        'amount': 1 
+    },
+    {
+        "id": 'clicks2',
+        "name": 'Getting a hang of it',
+        "desc": 'Click 100 times on the potato in this save',
+        "icon": None,
+        "kind": 'clicks',
+        'target': None,
+        'amount': 100 
+    },
+    {
+        "id": 'cps2',
+        "name": 'A hundred per second?!',
+        "desc": 'Gain 100 potato per second',
+        "icon": None,
+        "kind": 'cps',
+        'target': None,
+        'amount': 100
+    },
+    {
+        "id": 'potato2',
+        "name": 'A small potato shop',
+        "desc": 'Get a total of 1000 potatoes earned',
+        "icon": None,
+        "kind": 'earned',
+        'target': None,
+        'amount': 1000
+    },
+    {
+        "id": 'cursors2',
+        "name": 'A whole band of cursors, nice',
+        "desc": 'Buy 10 Cursor building from the Shop',
+        "icon": None,
+        "kind": 'building',
+        'target': 'click',
+        'amount': 10
+    },
+    {
+        "id": 'sweeper2',
+        "name": 'Are there this many?',
+        "desc": 'Buy 10 Minesweeper building from the Shop',
+        "icon": None,
+        "kind": 'building',
+        'target': 'minesweeper',
+        'amount': 10 
+    },
+    {
+        "id": 'tetris2',
+        "name": 'Complete that line of potatoes',
+        "desc": 'Buy 10 Tetris building from the Shop',
+        "icon": None,
+        "kind": 'building',
+        'target': 'tetris',
+        'amount': 10
+    },
+    {
+        "id": 'faceit2',
+        "name": 'Insta smoke is good',
+        "desc": 'Buy 10 Faceit building from the Shop',
+        "icon": None,
+        "kind": 'building',
+        'target': 'faceit',
+        'amount': 10 
+    },
+    {
+        "id": 'basket2',
+        "name": 'A 2-pointer',
+        "desc": 'Buy 10 Basketball building from the Shop',
+        "icon": None,
+        "kind": 'building',
+        'target': 'basket',
+        'amount': 10
+    },
 ]
 
 UPGRADES = [
@@ -137,7 +277,7 @@ UPGRADES = [
         "name": "Really Fast Tapper",
         "icon": None,
         "desc": "+100% to the amount of potatoes per click",
-        "cost": 1000,
+        "cost": 5000,
         "kind": 'click',
         "target": None,
         "multi": 2,
@@ -181,7 +321,7 @@ UPGRADES = [
         "name": "Brutal Tapper",
         "icon": None,
         "desc": "+200% to the amount of potatoes per click",
-        "cost": 5000,
+        "cost": 199999,
         "kind": 'click',
         "target": None,
         "multi": 4,
@@ -225,7 +365,7 @@ UPGRADES = [
         "name": "True Tapper",
         "icon": None,
         "desc": "+200% to the amount of potatoes per click",
-        "cost": 12000,
+        "cost": 500000,
         "kind": 'click',
         "target": None,
         "multi": 4,
@@ -269,7 +409,7 @@ UPGRADES = [
         "name": "Larp Tapper",
         "icon": None,
         "desc": "+400% to the amount of potatoes per click",
-        "cost": 300000,
+        "cost": 3000000,
         "kind": 'click',
         "target": None,
         "multi": 8,

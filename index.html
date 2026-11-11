@@ -17,8 +17,10 @@
       --accent: #d9822b;
       --accent-dark: #b5651d;
       --border: #ecd9c3;
+      --danger: #c62828;
     }
     * { box-sizing: border-box; }
+    html { scrollbar-gutter: stable; }
     body {
       margin: 0;
       min-height: 100vh;
@@ -34,6 +36,175 @@
       margin: 0 auto;
       padding: 32px 16px;
     }
+
+    /* Top-left toolbar */
+    .toolbar {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 50;
+      display: flex;
+      gap: 10px;
+    }
+    .tool-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 66px;
+      height: 66px;
+      padding: 0;
+      font-family: inherit;
+      font-size: 33px;
+      color: var(--text);
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .tool-btn:hover { border-color: var(--accent); background: #fff7e6; }
+    .tool-btn svg { width: 33px; height: 33px; transition: transform 0.3s; }
+
+    #reset { color: var(--muted); }
+    #reset:hover {
+      color: white;
+      background: var(--danger);
+      border-color: var(--danger);
+    }
+    #reset:hover svg { transform: rotate(-90deg); }
+
+    /* Reset confirmation window (centered, with blurred background) */
+    .confirm {
+      width: min(360px, calc(100vw - 32px));
+      padding: 24px;
+      color: var(--text);
+      text-align: center;
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(74, 44, 23, 0.3);
+    }
+    .confirm:popover-open { animation: pop-in 0.18s ease-out; }
+    .confirm::backdrop {
+      background: rgba(74, 44, 23, 0.35);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .confirm-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 12px;
+      color: var(--danger);
+      background: #fdecea;
+      border-radius: 50%;
+    }
+    .confirm-icon svg { width: 28px; height: 28px; }
+    .confirm-icon.big { font-size: 30px; font-weight: 600; }
+    .confirm h2 { margin: 0 0 6px; font-size: 22px; }
+    .confirm p  { margin: 0 0 20px; font-size: 15px; color: var(--muted); }
+    .confirm-actions { display: flex; gap: 10px; }
+    .confirm-actions button {
+      flex: 1;
+      padding: 10px 0;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-cancel {
+      color: var(--text);
+      background: white;
+      border: 2px solid var(--border);
+    }
+    .btn-cancel:hover { border-color: var(--accent); }
+    .btn-danger {
+      color: white;
+      background: var(--danger);
+      border: 2px solid var(--danger);
+    }
+    .btn-danger:hover { background: #a31f1f; border-color: #a31f1f; }
+    @keyframes pop-in { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
+
+    /* Popup windows (achievements, bought upgrades) */
+    .popup {
+      position: fixed;
+      inset: auto;
+      top: 94px;
+      left: 16px;
+      margin: 0;
+      width: min(420px, calc(100vw - 32px));
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding: 14px 16px 80px;
+      color: var(--text);
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(74, 44, 23, 0.2);
+    }
+    .popup h2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+    .popup-count { font-size: 15px; font-weight: 400; color: var(--muted); }
+    .popup-empty { margin: 0; font-size: 14px; color: var(--muted); }
+
+    #achievements {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* Bought upgrades, grouped by clicks / building */
+    #bought {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .bought-group[hidden] { display: none; }
+    .bought-group h3 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .bought-row {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* Small info tiles (achievements and bought upgrades) */
+    .achievement,
+    .owned-up {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: #fff7e6;
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+    }
+    .achievement.locked {
+      background: #f3e9dd;
+      border-color: var(--border);
+    }
+    .achievement.locked .a-icon { color: var(--muted); opacity: 0.6; }
+    .owned-up[hidden] { display: none; }
+    .a-icon { font-size: 22px; font-weight: 600; line-height: 1; }
 
     /* Left side: counter, potato, upgrades */
     .bakery {
@@ -62,20 +233,7 @@
       user-select: none;
       filter: drop-shadow(0 8px 16px rgba(74, 44, 23, 0.25));
     }
-    #reset {
-      margin-top: 24px;
-      padding: 6px 14px;
-      font-family: inherit;
-      font-size: 14px;
-      color: var(--muted);
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    #reset:hover { color: #b3261e; border-color: #b3261e; }
 
-    /* Upgrades panel under the potato */
     .upgrade-panel {
       width: 100%;
       max-width: 420px;
@@ -115,17 +273,19 @@
     .upgrade:disabled .u-icon { opacity: 0.35; }
     .upgrade[hidden] { display: none; }
 
-    .u-icon { font-size: 20px; font-weight: 600; line-height: 1; }
-    .u-icon img {
-      width: 40px;
-      height: 40px;
+    .u-icon { font-size: 24px; font-weight: 600; line-height: 1; }
+    .u-icon img,
+    .a-icon img {
+      width: 36px;
+      height: 36px;
       object-fit: contain;
       image-rendering: pixelated;
       user-select: none;
     }
 
-    /* Details card: hidden until you hover a tile */
-    .u-info {
+    /* Hover cards */
+    .u-info,
+    .a-info {
       position: absolute;
       top: calc(100% + 6px);
       left: 0;
@@ -142,11 +302,52 @@
       box-shadow: 0 6px 18px rgba(74, 44, 23, 0.18);
       pointer-events: none;
     }
-    .upgrade:hover .u-info { display: flex; }
+    .upgrade:hover .u-info,
+    .achievement:hover .a-info,
+    .owned-up:hover .a-info { display: flex; }
 
-    .u-name { font-size: 14px; font-weight: 600; }
-    .u-desc { font-size: 12px; color: var(--muted); }
+    /* Upgrade cards open ABOVE the tiles, so they never make the page taller */
+    .u-info {
+      top: auto;
+      bottom: calc(100% + 6px);
+    }
+
+    .u-name, .a-name { font-size: 14px; font-weight: 600; }
+    .u-desc, .a-desc { font-size: 12px; color: var(--muted); }
     .u-cost { font-size: 12px; }
+
+    /* Achievement popups */
+    #toasts {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 16px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 240px;
+      padding: 10px 14px;
+      background: white;
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(74, 44, 23, 0.2);
+      animation: toast-in 0.3s ease-out, toast-out 0.4s ease-in 3.6s forwards;
+    }
+    .t-icon { font-size: 28px; line-height: 1; }
+    .t-icon img { width: 36px; height: 36px; image-rendering: pixelated; }
+    .t-text { display: flex; flex-direction: column; }
+    .t-title { font-size: 12px; color: var(--accent-dark); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .t-name  { font-size: 16px; font-weight: 600; }
+    @keyframes toast-in  { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+    @keyframes toast-out { to { opacity: 0; transform: translateY(10px); } }
 
     /* Right side: shop */
     .shop-panel {
@@ -186,13 +387,119 @@
     .b-cost  { grid-area: cost;  font-size: 14px; }
     .b-rate  { grid-area: rate;  font-size: 14px; color: var(--muted); }
 
+    /* Everything except the toolbar buttons at 1.5x size.
+       Only on screens wider than phones, where 1.5x wouldn't fit.
+       Change the 1.5 values to scale it differently. */
+    @media (min-width: 701px) {
+      .game,
+      .popup-inner,
+      #toasts { zoom: 1.5; }
+      .popup {
+        width: min(630px, calc(100vw - 32px));
+        padding-bottom: 120px;
+      }
+      .confirm { width: min(540px, calc(100vw - 32px)); padding: 32px; }
+    }
+
     @media (max-width: 700px) {
-      .game { grid-template-columns: 1fr; }
+      .game { grid-template-columns: 1fr; padding-top: 98px; }
       #cookie img { width: 180px; height: 180px; }
+      .toast { min-width: 0; max-width: calc(100vw - 32px); }
     }
   </style>
 </head>
 <body>
+  <!-- Top-left toolbar -->
+  <div class="toolbar">
+    <button class="tool-btn" popovertarget="ach-popup" title="Achievements">🏆</button>
+    <button class="tool-btn" popovertarget="bought-popup" title="Bought upgrades">🎒</button>
+    <button class="tool-btn" id="reset" popovertarget="reset-confirm" title="Reset game">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 3-6.7"/>
+        <path d="M3 4v5h5"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Reset confirmation (opens from the reset button) -->
+  <div id="reset-confirm" class="confirm" popover>
+    <div class="popup-inner">
+      <div class="confirm-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 3-6.7"/>
+          <path d="M3 4v5h5"/>
+        </svg>
+      </div>
+      <h2>Reset the game?</h2>
+      <p>All your potatoes, buildings and upgrades will be lost. This can't be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" popovertarget="reset-confirm" popovertargetaction="hide">Cancel</button>
+        <button class="btn-danger" popovertarget="reset-sure" popovertargetaction="show">Reset</button>
+      </div>
+    </div>
+
+    <!-- Second step: "Are you sure?" (opens on top of the first window) -->
+    <div id="reset-sure" class="confirm" popover>
+      <div class="popup-inner">
+        <div class="confirm-icon big">!</div>
+        <h2>Are you sure?</h2>
+        <p>Last chance. Everything goes back to zero.</p>
+        <div class="confirm-actions">
+          <button class="btn-cancel" popovertarget="reset-confirm" popovertargetaction="hide">No, keep it</button>
+          <button id="reset-yes" class="btn-danger">Yes, reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievements window (opens from the trophy button) -->
+  <div id="ach-popup" class="popup" popover>
+    <div class="popup-inner">
+      <h2>Achievements <span id="ach-count" class="popup-count">0 / 0</span></h2>
+      <div id="achievements">
+        <!--
+          Your Python should create one tile like this per achievement.
+          Locked ones have the extra class "locked" and show "?" as the icon:
+
+          <div class="achievement locked">
+            <span class="a-icon">?</span>
+            <span class="a-info">
+              <span class="a-name">Warm-up</span>
+              <span class="a-desc">Click the potato 100 times</span>
+            </span>
+          </div>
+        -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Bought upgrades window (opens from the backpack button) -->
+  <div id="bought-popup" class="popup" popover>
+    <div class="popup-inner">
+      <h2>Bought upgrades <span id="bought-count" class="popup-count">0 / 0</span></h2>
+      <div id="bought">
+        <!--
+          Your Python should create one group like this for clicks
+          and one per building, and put each upgrade's tile into
+          its group's .bought-row. Hide a group while nothing in it is bought.
+
+          <div class="bought-group">
+            <h3>Clicks</h3>
+            <div class="bought-row">
+              <div class="owned-up">
+                <span class="a-icon">👆</span>
+                <span class="a-info">
+                  <span class="a-name">Tapper</span>
+                  <span class="a-desc">×2 potatoes per click</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        -->
+      </div>
+    </div>
+  </div>
+
   <main class="game">
     <section class="bakery">
       <h1 id="count">0 potatoes</h1>
@@ -205,8 +512,6 @@
         <h2>Upgrades</h2>
         <div id="upgrades">
           <!--
-            Your Python should create one button like this per upgrade:
-
             <button class="upgrade">
               <span class="u-icon">👆</span>
               <span class="u-info">
@@ -218,8 +523,6 @@
           -->
         </div>
       </div>
-
-      <button id="reset">Reset game</button>
     </section>
 
     <aside class="shop-panel">
@@ -227,6 +530,19 @@
       <div id="shop"></div>
     </aside>
   </main>
+
+  <!--
+    Achievement popups go here. Your Python adds one like this, and removes it after 4 seconds:
+
+    <div class="toast">
+      <span class="t-icon">🏆</span>
+      <span class="t-text">
+        <span class="t-title">Achievement unlocked</span>
+        <span class="t-name">Warm-up</span>
+      </span>
+    </div>
+  -->
+  <div id="toasts"></div>
 
   <script type="mpy" src="main.py" config='{"files": {"./data.py": "./data.py"}}'></script>
 </body>

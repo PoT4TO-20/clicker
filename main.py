@@ -4,13 +4,24 @@ from pyscript.ffi import create_proxy, is_none
 import math
 import json
 
-from data import BUILDINGS, UPGRADES
+from data import BUILDINGS, UPGRADES, ACHIEVEMENTS
 
 
 shop = document.querySelector("#shop")
 shop_buttons = {}
 upgrader = document.querySelector("#upgrades")
 upgrader_buttons = {}
+bought = document.querySelector("#bought")
+bought_ups = {}
+achievements = document.querySelector("#achievements")
+achieved = {}
+
+groups_ups = {}
+ups_rows = {}
+
+toasts = document.querySelector("#toasts")
+
+KIND_ORDER = ["clicks", "building", "cps", "earned"]
 
 SAVE_KEY = 'potato_save'
 
@@ -26,6 +37,8 @@ STATE = {
         "maksym": 0,
     },
     "upgrades": [],
+    'achievements': [],
+    'earned': 0.0,
     "last_save": window.Date.now(),
 }
 
@@ -53,6 +66,8 @@ def load():
         
     STATE['upgrades'] = data.get('upgrades', [])
     
+    STATE['achievements'] = data.get('achievements', [])
+    STATE['earned'] = data.get('earned', 0.0)
     
 
 def click_power():
@@ -89,13 +104,46 @@ def render():
         button.querySelector(".b-cost").innerText = f"{costs} potatoes"
         button.querySelector(".b-rate").innerText = f"{building['cps'] * building_power(building)} per second"
         button.disabled = STATE["cookies"] < costs
-        
+    
+    for group in groups_ups.values():
+        group.hidden = True
+    
     for upgrade in UPGRADES:
         button = upgrader_buttons[upgrade["id"]]
+        tile = bought_ups[upgrade['id']]
         costs = upgrade['cost']
         
         button.hidden = not is_unlocked(upgrade) or upgrade['id'] in STATE['upgrades']
         button.disabled = STATE["cookies"] < costs
+        
+        tile.hidden = not upgrade['id'] in STATE['upgrades']
+        
+        if upgrade['id'] in STATE['upgrades']:
+            groups_ups[group_of(upgrade)].hidden = False
+        
+    document.querySelector("#bought-count").innerText = f"{len(STATE['upgrades'])} / {len(UPGRADES)}"
+    
+    for achievement in ACHIEVEMENTS:
+        tile = achieved[achievement['id']]
+        icon = achievement.get('icon')
+        name = achievement['name']
+        desc = achievement['desc']
+        
+        if icon is None:
+            icon = achievement['name'][0]
+        
+        if achievement['id'] in STATE['achievements']:
+            tile.className = 'achievement'
+            tile.querySelector(".a-icon").innerText = icon
+            tile.querySelector(".a-name").innerText = name
+            tile.querySelector(".a-desc").innerText = desc
+        else:
+            tile.className = 'achievement locked'
+            tile.querySelector(".a-icon").innerText = '?'
+            tile.querySelector(".a-name").innerText = '???'
+            tile.querySelector(".a-desc").innerText = "???"
+            
+    document.querySelector("#ach-count").innerText = f"{len(STATE['achievements'])} / {len(ACHIEVEMENTS)}"
         
         
 def tick():
@@ -103,8 +151,29 @@ def tick():
     seconds = (current - STATE['last_save']) / 1000
     STATE['last_save'] = current
     
-    STATE['cookies'] += cps() * seconds
+    gained = cps() * seconds
+    
+    STATE['cookies'] += gained
+    STATE['earned'] += gained
+    
+    check_achievements()
     render()
+    
+
+def plus_cookie():
+    gained = click_power()
+    STATE['cookies'] += gained
+    STATE['clicks'] += 1
+    STATE['earned'] += gained
+    render()
+    
+    
+def cps():
+    total = 0
+    for i in BUILDINGS:
+        owned = STATE['buildings'][i["id"]]
+        total += i["cps"] * owned * building_power(i)
+    return total
     
 
 def build_shop():
@@ -128,14 +197,14 @@ def build_shop():
         
         
 def build_upgrader():
-    for upgrade in UPGRADES:
+    for upgrade in sorted(UPGRADES, key=lambda u: u['cost']):
         button = document.createElement("button")
         button.className = 'upgrade'
         name = upgrade["name"]
         desc = upgrade['desc']
         icon = upgrade.get('icon')
         if icon is None:
-            icon = upgrade['name']
+            icon = name[0]
         
         button.innerHTML = f"""
             <span class="u-icon">{icon}</span>
@@ -152,18 +221,97 @@ def build_upgrader():
         upgrader_buttons[upgrade["id"]] = button
 
 
-def plus_cookie():
-    STATE['cookies'] += click_power()
-    STATE['clicks'] += 1
-    render()
+def build_bought():
+    click = document.createElement("div")
+    click.className = 'bought-group'
+    
+    click.innerHTML = """
+        <h3>Clicks</h3>
+        <div class="bought-row"></div>
+    """
+    
+    bought.appendChild(click)
+    groups_ups['clicks'] = click
+    ups_rows['clicks'] = click.querySelector(".bought-row")
+    
+    for b in BUILDINGS:
+        building = document.createElement("div")
+        building.className = 'bought-group'
+        
+        building.innerHTML = f"""
+            <h3>{b['name']}</h3>
+            <div class="bought-row"></div>
+        """
+        
+        bought.appendChild(building)
+        groups_ups[b['id']] = building
+        ups_rows[b['id']] = building.querySelector(".bought-row")
+    
+    for upgrade in UPGRADES:
+        tile = document.createElement("div")
+        tile.className = 'owned-up'
+        icon = upgrade.get('icon')
+        name = upgrade['name']
+        desc = upgrade['desc']
+        
+        if icon is None:
+            icon = name[0]
+        
+        tile.innerHTML = f"""
+            <span class="a-icon">{icon}</span>
+            <span class="a-info">
+                <span class="a-name">{name}</span>
+                <span class="a-desc">{desc}</span>
+            </span>
+        """
+        
+        ups_rows[group_of(upgrade)].appendChild(tile)
+        bought_ups[upgrade['id']] = tile
+        
+        
+def build_achievements():
+    for a in sorted(ACHIEVEMENTS, key=lambda x: (KIND_ORDER.index(x['kind']), x['amount'])):
+        achievement = document.createElement("div")
+        achievement.className = 'achievement locked'
+        
+        achievement.innerHTML = f"""
+            <span class="a-icon">?</span>
+            <span class="a-info">
+                <span class="a-name">???</span>
+                <span class="a-desc">???</span>
+            </span>
+        """
+        
+        achievements.appendChild(achievement)
+        achieved[a['id']] = achievement
+        
+        
+def group_of(upgrade):
+    if upgrade['kind'] == 'click':
+        return 'clicks'
+    else:
+        return upgrade['target']
     
     
-def cps():
-    total = 0
-    for i in BUILDINGS:
-        owned = STATE['buildings'][i["id"]]
-        total += i["cps"] * owned * building_power(i)
-    return total
+def is_achieved(achievement):
+    if achievement['kind'] == 'clicks':
+        if STATE['clicks'] >= achievement['amount']:
+            return True
+        
+    if achievement['kind'] == 'cps':
+        if cps() >= achievement['amount']:
+            return True
+        
+    if achievement['kind'] == 'earned':
+        if STATE['earned'] >= achievement['amount']:
+            return True
+        
+    if achievement['kind'] == 'building':
+        target = achievement['target']
+        if STATE['buildings'][target] >= achievement['amount']:
+            return True
+        
+    return False
     
     
 def cost(building):
@@ -204,6 +352,36 @@ def buy_upgrade(upgrade):
         render()
 
 
+def show_toast(achievement):
+    toast = document.createElement("div")
+    toast.className = 'toast'
+    icon = achievement.get('icon')
+    name = achievement['name']
+    
+    if icon is None:
+        icon = name[0]
+    
+    toast.innerHTML = f"""
+        <span class="t-icon">{icon}</span>
+        <span class="t-text">
+            <span class="t-title">Achievement unlocked</span>
+            <span class="t-name">{name}</span>
+        </span>
+    """
+    
+    toasts.appendChild(toast)
+    window.setTimeout(create_proxy(toast.remove), 4000)
+    
+
+def check_achievements():
+    for achievement in ACHIEVEMENTS:
+        if achievement['id'] in STATE['achievements']:
+            continue
+        
+        if is_achieved(achievement):
+            STATE['achievements'].append(achievement['id'])
+            show_toast(achievement)
+
 
 @when("click", "#cookie")
 def click_cookie(event):
@@ -215,12 +393,8 @@ def right_click_cookie(event):
     event.preventDefault()
     
 
-@when("click", "#reset")
+@when("click", "#reset-yes")
 def on_reset(event):
-    answer = window.confirm("Reset everything?")
-    if not answer:
-        return
-    
     window.localStorage.removeItem(SAVE_KEY)
     window.location.reload()
     
@@ -228,6 +402,8 @@ def on_reset(event):
 load()
 build_shop()
 build_upgrader()
+build_bought()
+build_achievements()
 render()
 window.setInterval(create_proxy(tick), 10)
 window.setInterval(create_proxy(save), 5000)
