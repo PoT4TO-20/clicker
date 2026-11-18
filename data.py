@@ -53,7 +53,7 @@ ACHIEVEMENTS = [
         "icon": None,
         "kind": 'cps',
         'target': None,
-        'amount': 1 
+        'amount': 1
     },
     {
         "id": 'potato1',
@@ -71,7 +71,7 @@ ACHIEVEMENTS = [
         "icon": None,
         "kind": 'building',
         'target': 'click',
-        'amount': 1 
+        'amount': 1
     },
     {
         "id": 'sweeper1',
@@ -143,7 +143,7 @@ ACHIEVEMENTS = [
         "icon": None,
         "kind": 'building',
         'target': 'click',
-        'amount': 10
+        'amount': 20
     },
     {
         "id": 'sweeper2',
@@ -152,7 +152,7 @@ ACHIEVEMENTS = [
         "icon": None,
         "kind": 'building',
         'target': 'minesweeper',
-        'amount': 10 
+        'amount': 20 
     },
     {
         "id": 'tetris2',
@@ -161,7 +161,7 @@ ACHIEVEMENTS = [
         "icon": None,
         "kind": 'building',
         'target': 'tetris',
-        'amount': 10
+        'amount': 20
     },
     {
         "id": 'faceit2',
@@ -170,7 +170,7 @@ ACHIEVEMENTS = [
         "icon": None,
         "kind": 'building',
         'target': 'faceit',
-        'amount': 10 
+        'amount': 20 
     },
     {
         "id": 'basket2',
@@ -179,7 +179,7 @@ ACHIEVEMENTS = [
         "icon": None,
         "kind": 'building',
         'target': 'basket',
-        'amount': 10
+        'amount': 20
     },
 ]
 
@@ -199,23 +199,35 @@ UPGRADES = [
         "id": "cursorer1",
         "name": "Better Aim",
         "icon": None,
-        "desc": "+100% to the amount of potatoes per click by the 'Click' building",
-        "cost": 100,
+        "desc": "+100% to the amount of potatoes per click by the 'Cursor' building",
+        "cost": 200,
         "kind": 'building',
         "target": "click",
         "multi": 2,
-        "requires": 1
+        "requires": 10
+    },
+    {
+        "id": "cursorers",
+        "name": "Turbo Cursors",
+        "icon": None,
+        "desc": "+1% potatoes per click for every Cursor you own",
+        "cost": 2000,
+        "kind": "click",
+        "target": None,
+        "per": "click",
+        "bonus": 0.01,
+        "requires": 700
     },
     {
         "id": "mine1",
         "name": "The '1' Block",
         "icon": None,
         "desc": "+100% to the amount of potatoes per click by the 'Minesweeper' building",
-        "cost": 500,
+        "cost": 600,
         "kind": 'building',
         "target": "minesweeper",
         "multi": 2,
-        "requires": 1
+        "requires": 10
     },
     {
         "id": "tetris1",
@@ -226,14 +238,14 @@ UPGRADES = [
         "kind": 'building',
         "target": "tetris",
         "multi": 2,
-        "requires": 1
+        "requires": 10
     },
     {
         "id": "tapper2",
         "name": "Fast Tapper",
         "icon": None,
         "desc": "+100% to the amount of potatoes per click",
-        "cost": 500,
+        "cost": 1000,
         "kind": 'click',
         "target": None,
         "multi": 2,
@@ -243,12 +255,12 @@ UPGRADES = [
         "id": "cursorer2",
         "name": "Matvey's Aim",
         "icon": None,
-        "desc": "+100% to the amount of potatoes per click by the 'Click' building",
-        "cost": 500,
+        "desc": "+100% to the amount of potatoes per click by the 'Cursor' building",
+        "cost": 5000,
         "kind": 'building',
         "target": "click",
         "multi": 2,
-        "requires": 13
+        "requires": 25
     },
     {
         "id": "mine2",
@@ -259,7 +271,7 @@ UPGRADES = [
         "kind": 'building',
         "target": "minesweeper",
         "multi": 2,
-        "requires": 20
+        "requires": 25
     },
     {
         "id": "tetris2",
@@ -270,14 +282,14 @@ UPGRADES = [
         "kind": 'building',
         "target": "tetris",
         "multi": 2,
-        "requires": 10
+        "requires": 25
     },
     {
         "id": "tapper3",
         "name": "Really Fast Tapper",
         "icon": None,
         "desc": "+100% to the amount of potatoes per click",
-        "cost": 5000,
+        "cost": 30000,
         "kind": 'click',
         "target": None,
         "multi": 2,
@@ -287,8 +299,8 @@ UPGRADES = [
         "id": "cursorer3",
         "name": "Anton's Aim",
         "icon": None,
-        "desc": "+100% to the amount of potatoes per click",
-        "cost": 2000,
+        "desc": "+100% to the amount of potatoes per click by the 'Cursor' building",
+        "cost": 20000,
         "kind": 'building',
         "target": "click",
         "multi": 2,
@@ -314,7 +326,7 @@ UPGRADES = [
         "kind": 'building',
         "target": "tetris",
         "multi": 2,
-        "requires": 36
+        "requires": 50
     },
     {
         "id": "tapper4",
@@ -331,19 +343,19 @@ UPGRADES = [
         "id": "cursorer4",
         "name": "Maxim's Aim",
         "icon": None,
-        "desc": "+200% to the amount of potatoes per click",
-        "cost": 7000,
+        "desc": "+200% to the amount of potatoes per click by the 'Cursor' building",
+        "cost": 120000,
         "kind": 'building',
         "target": "click",
         "multi": 4,
-        "requires": 100
+        "requires": 120
     },
     {
         "id": "mine4",
         "name": "The '4' Block",
         "icon": None,
         "desc": "+200% to the amount of potatoes per click by the 'Minesweeper' building",
-        "cost": 23000,
+        "cost": 130000,
         "kind": 'building',
         "target": "minesweeper",
         "multi": 4,
@@ -375,8 +387,8 @@ UPGRADES = [
         "id": "cursorer5",
         "name": "Dima's Aim",
         "icon": None,
-        "desc": "+200% to the amount of potatoes per click",
-        "cost": 20000,
+        "desc": "+200% to the amount of potatoes per click by the 'Cursor' building",
+        "cost": 300000,
         "kind": 'building',
         "target": "click",
         "multi": 4,
@@ -387,7 +399,7 @@ UPGRADES = [
         "name": "The '5' Block",
         "icon": None,
         "desc": "+200% to the amount of potatoes per click by the 'Minesweeper' building",
-        "cost": 57000,
+        "cost": 1000000,
         "kind": 'building',
         "target": "minesweeper",
         "multi": 4,
@@ -398,7 +410,7 @@ UPGRADES = [
         "name": "The S Shape",
         "icon": None,
         "desc": "+200% to the amount of potatoes per click by the 'Tetris' building",
-        "cost": 777777,
+        "cost": 4545454,
         "kind": 'building',
         "target": "tetris",
         "multi": 4,
@@ -419,19 +431,19 @@ UPGRADES = [
         "id": "cursorer6",
         "name": "David's Aim",
         "icon": None,
-        "desc": "+400% to the amount of potatoes per click",
-        "cost": 500000,
+        "desc": "+400% to the amount of potatoes per click by the 'Cursor' building",
+        "cost": 5000000,
         "kind": 'building',
         "target": "click",
         "multi": 8,
-        "requires": 500
+        "requires": 654
     },
     {
         "id": "mine6",
         "name": "The '6' Block",
         "icon": None,
         "desc": "+400% to the amount of potatoes per click by the 'Minesweeper' building",
-        "cost": 57000,
+        "cost": 52000000,
         "kind": 'building',
         "target": "minesweeper",
         "multi": 8,
@@ -442,7 +454,7 @@ UPGRADES = [
         "name": "The O Shape",
         "icon": None,
         "desc": "+400% to the amount of potatoes per click by the 'Tetris' building",
-        "cost": 777777,
+        "cost": 77777777,
         "kind": 'building',
         "target": "tetris",
         "multi": 8,

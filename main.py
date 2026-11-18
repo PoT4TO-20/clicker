@@ -2,6 +2,7 @@ from pyscript import document, when, window
 from pyscript.ffi import create_proxy, is_none
 
 import math
+import time
 import json
 
 from data import BUILDINGS, UPGRADES, ACHIEVEMENTS
@@ -21,9 +22,40 @@ ups_rows = {}
 
 toasts = document.querySelector("#toasts")
 
+status = document.querySelector("#shave-status")
+pips_box = document.querySelector("#shave-pips")
+pips = pips_box.querySelectorAll(".pip")
+cookie_btn = document.querySelector("#cookie")
+
 KIND_ORDER = ["clicks", "building", "cps", "earned"]
 
+minute = 60 * 1000
+
+COOLDOWN_MIN = 10 * minute
+COOLDOWN_MAX = 20 * minute
+
+BOOST_MIN = 1 * minute
+BOOST_MAX = 2 * minute
+
+SHAVE_STAGES = 7
+
+last_shave = 0
+
 SAVE_KEY = 'potato_save'
+
+
+def fmt_time(ms):
+    secs = int(ms / 1000)
+    
+    minutes = secs // 60
+    left_secs = secs % 60
+    
+    return f"{minutes}:{left_secs:02d}"
+
+    
+def now_ms():
+    return time.time() * 1000
+
 
 STATE = {
     "cookies": 0.0,
@@ -39,7 +71,12 @@ STATE = {
     "upgrades": [],
     'achievements': [],
     'earned': 0.0,
-    "last_save": window.Date.now(),
+    'click_earned': 0.0,
+    'shave_stage': 0,
+    'shave_ready_at': 0,
+    'boost_until': 0,
+    'boosts': 0,
+    "last_save": now_ms(),
 }
 
 
@@ -57,7 +94,7 @@ def load():
     STATE['cookies'] = data.get('cookies', 0.0)
     STATE['clicks'] = data.get('clicks', 0)
     
-    STATE['last_save'] = data.get('last_save', window.Date.now())
+    STATE['last_save'] = data.get('last_save', now_ms())
     
     saved_buildings = data.get('buildings', {})
     
@@ -68,13 +105,45 @@ def load():
     
     STATE['achievements'] = data.get('achievements', [])
     STATE['earned'] = data.get('earned', 0.0)
+    STATE['click_earned'] = data.get('click_earned', 0.0)
     
+    STATE['shave_stage'] = data.get('shave_stage', 0)
+    STATE['shave_ready_at'] = data.get('shave_ready_at', 0)
+    STATE['boost_until'] = data.get('boost_until', 0)
+    
+    STATE['boosts'] = data.get('boosts', 0)
+
+
+def upgrade_multi(upgrade):
+    if 'per' in upgrade:
+        return 1 + upgrade['bonus'] * STATE['buildings'][upgrade["per"]]
+    
+    return upgrade['multi']
+
+
+def random_between(a, b):
+    return a + (b - a) * window.Math.random()
+    
+    
+def boost_active():
+    return now_ms() < STATE['boost_until']
+    
+    
+def shave_ready():
+    return now_ms() >= STATE['shave_ready_at'] and not boost_active()
+    
+    
+def boost_mult():
+    if boost_active():
+        return 2
+    return 1
+
 
 def click_power():
     power = 1
     for upgrade in UPGRADES:
         if upgrade["kind"] == "click" and upgrade['id'] in STATE["upgrades"]:
-            power *= upgrade["multi"]
+            power *= upgrade_multi(upgrade)
             
     return power
 
@@ -83,7 +152,7 @@ def building_power(building):
     power = 1
     for upgrade in UPGRADES:
         if upgrade["kind"] == 'building' and upgrade['id'] in STATE['upgrades'] and upgrade['target'] == building["id"]:
-            power *= upgrade["multi"]
+            power *= upgrade_multi(upgrade)
             
     return power
 
@@ -92,7 +161,7 @@ def render():
     cookies = int(STATE['cookies'])
     document.querySelector("#count").innerText = f"{cookies} potatoes"
     
-    rate = cps()
+    rate = cps() * boost_mult()
     document.querySelector("#cps").innerText = f"potatoes per second: {rate:.1f}"
     
     for building in BUILDINGS:
@@ -122,6 +191,13 @@ def render():
             groups_ups[group_of(upgrade)].hidden = False
         
     document.querySelector("#bought-count").innerText = f"{len(STATE['upgrades'])} / {len(UPGRADES)}"
+        
+    document.querySelector("#stat-earned").innerText = f"{int(STATE['earned'])}"
+    document.querySelector("#stat-clicks").innerText = f"{STATE['clicks']}"
+    document.querySelector("#stat-click-earned").innerText = f"{int(STATE['click_earned'])}"
+    document.querySelector("#stat-building-earned").innerText = f"{int(STATE['earned']) - int(STATE['click_earned'])}"
+    document.querySelector('#stat-boosts').innerText = f"{STATE['boosts']}"
+    document.querySelector('#stat-boosts-row').hidden = STATE['boosts'] == 0
     
     for achievement in ACHIEVEMENTS:
         tile = achieved[achievement['id']]
@@ -144,14 +220,33 @@ def render():
             tile.querySelector(".a-desc").innerText = "???"
             
     document.querySelector("#ach-count").innerText = f"{len(STATE['achievements'])} / {len(ACHIEVEMENTS)}"
+    
+    now = now_ms()
+    
+    if boost_active():
+        status.className = 'boost'
+        status.innerText = f"2X Income Boost\n {fmt_time(STATE['boost_until'] - now)} left"
+    else:
+        status.className = ''
+        status.innerText = ""
+        
+    pips_box.hidden = STATE['shave_stage'] == 0 or now_ms() - last_shave > 5000
+
+    for i, pip in enumerate(pips):
+        if i < STATE['shave_stage']:
+            pip.className = 'pip done'
+        else:
+            pip.className = 'pip'
+            
+    document.body.classList.toggle("boosted", boost_active())
         
         
 def tick():
-    current = window.Date.now()
+    current = now_ms()
     seconds = (current - STATE['last_save']) / 1000
     STATE['last_save'] = current
     
-    gained = cps() * seconds
+    gained = cps() * seconds * boost_mult()
     
     STATE['cookies'] += gained
     STATE['earned'] += gained
@@ -160,12 +255,14 @@ def tick():
     render()
     
 
-def plus_cookie():
-    gained = click_power()
-    STATE['cookies'] += gained
+def plus_cookie(event):
+    gained = click_power() * boost_mult()
+    STATE['cookies'] += gained 
     STATE['clicks'] += 1
-    STATE['earned'] += gained
+    STATE['earned'] += gained 
+    STATE['click_earned'] += gained 
     render()
+    show_float(event.clientX, event.clientY, gained)
     
     
 def cps():
@@ -383,14 +480,69 @@ def check_achievements():
             show_toast(achievement)
 
 
+def show_float(x, y, amount):
+    potato = document.createElement("span")
+    potato.className = 'float-text'
+    
+    potato.innerText = f"+{amount:.1f}"
+    potato.style.left = f"{x}px"
+    potato.style.top = f"{y}px"
+    
+    document.body.appendChild(potato)
+    window.setTimeout(create_proxy(potato.remove), 1000)
+    
+    
+def drop_peels(x, y):
+    for n in range(3):
+        piece = document.createElement("span")
+        piece.className = 'peel blob'
+
+        piece.style.left = f"{x}px"
+        piece.style.top = f"{y}px"
+
+        piece.style.setProperty("--dx", f"{random_between(-60, 60)}px")
+        piece.style.setProperty("--rot", f"{random_between(-270, 270)}deg")
+
+        document.body.appendChild(piece)
+        window.setTimeout(create_proxy(piece.remove), 1000)
+
+
 @when("click", "#cookie")
 def click_cookie(event):
-    plus_cookie()
+    plus_cookie(event)
     
     
 @when("contextmenu", "#cookie")
 def right_click_cookie(event):
+    global last_shave
     event.preventDefault()
+    
+    cookie_btn.classList.remove("shake")
+    cookie_btn.offsetWidth
+    cookie_btn.classList.add("shake")
+    window.setTimeout(create_proxy(lambda: cookie_btn.classList.remove("shake")), 400)
+    
+    if not shave_ready():
+        return
+    
+    if now_ms() - last_shave < 1000:
+        return
+    else:
+        last_shave = now_ms()
+    
+    STATE['shave_stage'] += 1
+    drop_peels(event.clientX, event.clientY)
+    
+    if STATE['shave_stage'] >= SHAVE_STAGES:
+        now = now_ms()
+        STATE['boost_until'] = now + random_between(BOOST_MIN, BOOST_MAX)
+        STATE['shave_stage'] = 0
+        STATE['shave_ready_at'] = STATE['boost_until'] + random_between(COOLDOWN_MIN, COOLDOWN_MAX)
+        
+        STATE['boosts'] += 1
+        
+    
+    render()
     
 
 @when("click", "#reset-yes")
@@ -411,3 +563,4 @@ window.setInterval(create_proxy(save), 5000)
 
 
 #CHECKS
+
